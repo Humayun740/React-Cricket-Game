@@ -26,8 +26,11 @@ function App() {
   const [commentary, setCommentary] = useState('Press Play Ball when the slider reaches your target segment.')
   const [gameOver, setGameOver] = useState(false)
   const [isBallInProgress, setIsBallInProgress] = useState(false)
+  const [isBowling, setIsBowling] = useState(false)
   const [sliderPosition, setSliderPosition] = useState(0)
   const sliderDirectionRef = useRef(1)
+  const resolveShotTimeoutRef = useRef(null)
+  const resetBallTimeoutRef = useRef(null)
 
   const ballsRemaining = TOTAL_BALLS - ballsBowled
   const wicketsRemaining = TOTAL_WICKETS - wickets
@@ -61,6 +64,30 @@ function App() {
     }
   }, [gameOver, isBallInProgress])
 
+  useEffect(() => {
+    return () => {
+      if (resolveShotTimeoutRef.current) {
+        window.clearTimeout(resolveShotTimeoutRef.current)
+      }
+
+      if (resetBallTimeoutRef.current) {
+        window.clearTimeout(resetBallTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  function clearAnimationTimers() {
+    if (resolveShotTimeoutRef.current) {
+      window.clearTimeout(resolveShotTimeoutRef.current)
+      resolveShotTimeoutRef.current = null
+    }
+
+    if (resetBallTimeoutRef.current) {
+      window.clearTimeout(resetBallTimeoutRef.current)
+      resetBallTimeoutRef.current = null
+    }
+  }
+
   function handleStyleChange(style) {
     if (gameOver || isBallInProgress) {
       return
@@ -71,6 +98,7 @@ function App() {
   }
 
   function handleRestart() {
+    clearAnimationTimers()
     setRuns(0)
     setWickets(0)
     setBallsBowled(0)
@@ -79,6 +107,7 @@ function App() {
     setCommentary('Match reset. Press Play Ball when the slider reaches your target segment.')
     setGameOver(false)
     setIsBallInProgress(false)
+    setIsBowling(false)
     setSliderPosition(0)
     sliderDirectionRef.current = 1
   }
@@ -89,6 +118,8 @@ function App() {
     }
 
     setIsBallInProgress(true)
+    setIsBowling(true)
+    setCommentary('Ball is coming in. Outcome will lock when it reaches the batsman.')
 
     const outcome = getOutcomeFromSlider(probabilityTable, sliderPosition)
     const nextBallsBowled = ballsBowled + 1
@@ -96,21 +127,23 @@ function App() {
     const nextWickets = outcome === 'W' ? wickets + 1 : wickets
     const hasMatchEnded = nextBallsBowled >= TOTAL_BALLS || nextWickets >= TOTAL_WICKETS
 
-    setRuns(nextRuns)
-    setWickets(nextWickets)
-    setBallsBowled(nextBallsBowled)
-    setLastOutcome(outcome === 'W' ? 'Wicket' : `${outcome} ${outcome === '1' ? 'Run' : 'Runs'}`)
-    setCommentary(COMMENTARY[outcome])
-    setGameOver(hasMatchEnded)
+    resolveShotTimeoutRef.current = window.setTimeout(() => {
+      setRuns(nextRuns)
+      setWickets(nextWickets)
+      setBallsBowled(nextBallsBowled)
+      setLastOutcome(outcome === 'W' ? 'Wicket' : `${outcome} ${outcome === '1' ? 'Run' : 'Runs'}`)
+      setCommentary(COMMENTARY[outcome])
+      setGameOver(hasMatchEnded)
 
-    if (hasMatchEnded) {
-      setCommentary(`Game over. Final score: ${nextRuns}/${nextWickets} in ${formatOvers(nextBallsBowled)} overs.`)
-      return
-    }
+      if (hasMatchEnded) {
+        setCommentary(`Game over. Final score: ${nextRuns}/${nextWickets} in ${formatOvers(nextBallsBowled)} overs.`)
+      }
+    }, 700)
 
-    window.setTimeout(() => {
+    resetBallTimeoutRef.current = window.setTimeout(() => {
+      setIsBowling(false)
       setIsBallInProgress(false)
-    }, 160)
+    }, 950)
   }
 
   return (
@@ -138,7 +171,7 @@ function App() {
               onRestart={handleRestart}
             />
 
-            <FieldPlaceholder />
+            <FieldPlaceholder isBowling={isBowling} />
 
             <PowerBarPlaceholder
               probabilityTable={probabilityTable}

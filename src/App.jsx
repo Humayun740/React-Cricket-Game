@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import CommentaryPanel from './components/CommentaryPanel'
 import ControlsPanel from './components/ControlsPanel'
-import DayNotes from './components/DayNotes'
 import FieldPlaceholder from './components/FieldPlaceholder'
 import GameStatus from './components/GameStatus'
 import MatchSummary from './components/MatchSummary'
@@ -120,7 +119,7 @@ function App() {
     }
 
     setBattingStyle(style)
-    setCommentary(`${STYLE_LABELS[style]} mode selected. Time your shot with the moving slider.`)
+    setCommentary(`${STYLE_LABELS[style]} mode selected`)
   }
 
   function handleRestart() {
@@ -130,7 +129,7 @@ function App() {
     setBallsBowled(0)
     setBattingStyle('aggressive')
     setLastOutcome('Not played yet')
-    setCommentary('Match reset. Press Play Ball when the slider reaches your target segment.')
+    setCommentary('Match reset')
     setGameOver(false)
     setIsBallInProgress(false)
     setIsBowling(false)
@@ -147,7 +146,7 @@ function App() {
     setIsBallInProgress(true)
     setIsBowling(true)
     setIsBatSwinging(false)
-    setCommentary('Ball is coming in. Outcome will lock when it reaches the batsman.')
+    setCommentary('Ball travelling...')
 
     const outcome = getOutcomeFromSlider(probabilityTable, sliderPosition)
     const nextBallsBowled = ballsBowled + 1
@@ -172,7 +171,7 @@ function App() {
       setGameOver(hasMatchEnded)
 
       if (hasMatchEnded) {
-        setCommentary(`Game over. Final score: ${nextRuns}/${nextWickets} in ${formatOvers(nextBallsBowled)} overs.`)
+        setCommentary(`Game over. Final score: ${nextRuns}/${nextWickets} in ${formatOvers(nextBallsBowled)} overs`)
       }
     }, BALL_TRAVEL_MS)
 
@@ -227,8 +226,6 @@ function App() {
             <ProbabilityTable probabilityTable={probabilityTable} />
 
             <CommentaryPanel commentary={commentary} />
-
-            <DayNotes />
           </aside>
         </div>
       </div>

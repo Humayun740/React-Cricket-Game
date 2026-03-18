@@ -24,9 +24,6 @@ function PowerBarPlaceholder({ probabilityTable, sliderPosition, isBallInProgres
       <p className="mt-2 text-sm text-slate-700">
         Slider position: {(sliderPosition * 100).toFixed(1)}%
       </p>
-      <p className="mt-1 text-sm text-slate-700">
-        {isBallInProgress ? 'Slider paused while outcome is locked.' : 'Slider is live. Click Play Ball to lock result.'}
-      </p>
     </div>
   )
 }

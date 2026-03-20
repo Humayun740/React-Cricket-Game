@@ -30,13 +30,13 @@ export const TEST_OUTCOME_SEQUENCES = {
 }
 
 export const COMMENTARY = {
-  W: 'Wicket taken',
-  0: 'No run',
-  1: 'Single run',
-  2: 'Two runs',
-  3: 'Three runs',
-  4: 'Four shot',
-  6: 'Six shot',
+  W: 'Wicket taken, rip',
+  0: 'No run, :(',
+  1: 'A single run was made',
+  2: '2 runs counted',
+  3: 'Three runs, good job',
+  4: 'Four on the BOUNDARY',
+  6: 'A Six in the sky',
 }
 
 export const STYLE_LABELS = {

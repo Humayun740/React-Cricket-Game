@@ -1,6 +1,6 @@
 import { getPowerBarColorClass } from '../utils/gameUtils'
 
-function PowerBarPlaceholder({ probabilityTable, sliderPosition, isBallInProgress }) {
+function PowerBarPlaceholder({ probabilityTable, sliderPosition }) {
   return (
     <div className="border border-slate-400 bg-white p-4">
       <h2 className="mb-3 text-xl font-bold">Power Bar</h2>
